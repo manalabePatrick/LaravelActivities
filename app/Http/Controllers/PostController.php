@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\post;
 use Illuminate\Http\Request;
+use SebastianBergmann\Environment\Console;
+
+use Illuminate\Support\Facades\Auth;
+
+
 
 class PostController extends Controller
 {
@@ -26,8 +31,15 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
-        return view('posts.create');
+        //go to create page id user is logged in
+
+        // Get the currently authenticated user id
+        $user_id = Auth::id();
+        if ($user_id) {
+            return view('posts.create');
+        } else {
+            return view('posts.alert');
+        }
     }
 
     /**
@@ -56,6 +68,7 @@ class PostController extends Controller
     public function show($id)
     {
         //show data
+
         $post = Post::find($id);
         return view('posts.show', compact('post'));
     }
@@ -68,10 +81,14 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //return edit view
-        $post = Post::find($id);
-
-        return view('posts.edit', compact('post'));
+        //return edit view if user is logged in
+        $user_id = Auth::id();
+        if ($user_id) {
+            $post = Post::find($id);
+            return view('posts.edit', compact('post'));
+        } else {
+            return view('posts.alert');
+        }
     }
 
     /**
@@ -100,10 +117,14 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $post = Post::find($id);
-        $post->delete();
-
-        return redirect('/posts');
+        //delete data id user is logged in
+        $user_id = Auth::id();
+        if ($user_id) {
+            $post = Post::find($id);
+            $post->delete();
+            return redirect('/posts');
+        } else {
+            return view('posts.alert');
+        }
     }
 }
