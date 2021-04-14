@@ -26,7 +26,16 @@
                                         <td> {{ $post->id }} </td>
                                         <td> {{ $post->title }} </td>
                                         <td> {{ $post->description }} </td>
-                                        <td> <a  href="/users/{{$post->id}}"> View </a> </td>
+                                        <td> <a  href="/posts/{{$post->id}}" class="btn btn-success"> View </a> </td>
+                                        <td> <a  href="/posts/{{$post->id}}/edit" class="btn btn-info"> Edit </a> </td>
+                                        <td> 
+                                            <form action="{{route('posts.destroy', $post ->id)}}" method="POST">
+                                                @method('DELETE')
+                                                @csrf
+
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </td>
                                 </tr>
                                 @endforeach
                             </tbody>

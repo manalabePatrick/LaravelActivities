@@ -53,9 +53,11 @@ class PostController extends Controller
      * @param  \App\Models\post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(post $post)
+    public function show($id)
     {
-        //
+        //show data
+        $post = Post::find($id);
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -64,9 +66,12 @@ class PostController extends Controller
      * @param  \App\Models\post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(post $post)
+    public function edit($id)
     {
-        //
+        //return edit view
+        $post = Post::find($id);
+
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -76,9 +81,15 @@ class PostController extends Controller
      * @param  \App\Models\post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, post $post)
+    public function update(Request $request, $id)
     {
-        //
+        //update the value
+        $post = Post::find($id);
+        $post->title = $request->title;
+        $post->description = $request->description;
+        $post->save();
+
+        return redirect('/posts');
     }
 
     /**
@@ -87,8 +98,12 @@ class PostController extends Controller
      * @param  \App\Models\post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(post $post)
+    public function destroy($id)
     {
         //
+        $post = Post::find($id);
+        $post->delete();
+
+        return redirect('/posts');
     }
 }
