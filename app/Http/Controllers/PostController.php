@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use SebastianBergmann\Environment\Console;
 
 use Illuminate\Support\Facades\Auth;
-
-
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -20,7 +20,10 @@ class PostController extends Controller
     public function index()
     {
         //return posts view
-        $post = Post::get();
+        //  $post = Post::where('title', '!=', '')->orderBy('created_at')->get();
+
+        $user = User::find(Auth::id());
+        $post = $user->posts()->orderBy('created_at', 'desc')->get();
         return view('posts.index', compact('post'));
     }
 
@@ -69,9 +72,9 @@ class PostController extends Controller
 
         //post data to database
         $post = new Post();
-        $post->title = $request->title;
-        $post->description = $request->description;
+        $post->fill($request->all());
         $post->img = $fileNameToStore;
+        $post->user_id = auth()->user()->id;
         $post->save();
 
         return redirect('/posts');
@@ -83,12 +86,13 @@ class PostController extends Controller
      * @param  \App\Models\post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(post $post)
     {
         //show data
 
-        $post = Post::find($id);
-        return view('posts.show', compact('post'));
+        $post = Post::find($post->id);
+        $comments = $post->comments;
+        return view('posts.show', compact('post', 'comments'));
     }
 
     /**
